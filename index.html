@@ -281,6 +281,29 @@
       background: #f7f3ea;
       border-radius: 8px;
     }
+    .wa-float {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 40;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #25d366;
+      color: #fff;
+      display: grid;
+      place-items: center;
+      text-decoration: none;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.28);
+    }
+    .wa-float img { width: 32px; height: 32px; }
+    .wa-float.is-off {
+      background: #c5c1b8;
+      filter: grayscale(1);
+      opacity: 0.72;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
   </style>
 </head>
 <body>
@@ -366,5 +389,31 @@
       <span>Fuva · Pueyrredón 2345 · 3795010162</span>
     </div>
   </footer>
+  <a id="p2l-wa-float" class="wa-float is-off" href="#" data-company-id="6ac69c445c28697600faf070" aria-disabled="true" title="Contrata o configura WhatsApp (WABA Meta) para activar este botón" aria-label="WhatsApp">
+    <img src="whatsapp-symbol-logo-svgrepo-com.svg" alt="" />
+  </a>
+  <script>
+    (function () {
+      var el = document.getElementById('p2l-wa-float');
+      if (!el) return;
+      var id = el.getAttribute('data-company-id') || '';
+      el.addEventListener('click', function (ev) {
+        if (el.classList.contains('is-off')) ev.preventDefault();
+      });
+      if (!id) return;
+      fetch('https://www.refactorii.com/p2l-tenant/api/p2l-techguard-whatsapp-bot/public/company/' + encodeURIComponent(id) + '/channels')
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (data) {
+          if (!data || !data.whatsapp || !data.waLink) return;
+          el.classList.remove('is-off');
+          el.setAttribute('href', data.waLink);
+          el.setAttribute('target', '_blank');
+          el.setAttribute('rel', 'noopener noreferrer');
+          el.removeAttribute('aria-disabled');
+          el.removeAttribute('title');
+        })
+        .catch(function () {});
+    })();
+  </script>
 </body>
 </html>
